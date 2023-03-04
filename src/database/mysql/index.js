@@ -1,6 +1,6 @@
 import Sequelize from "sequelize";
 import dotEnv from "dotenv";
-
+import usersModel from "./models/users";
 class DBConn {
 	constructor() {
 		dotEnv.config();
@@ -38,7 +38,9 @@ class DBConn {
 			conf
 		);
 		const database = {
-			models: {},
+			models: {
+				users: usersModel(sequelize),
+			},
 		};
 
 		Object.keys(database.models).forEach((modelName) => {
