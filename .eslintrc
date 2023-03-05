@@ -22,9 +22,7 @@
 		"eslint-plugin-lodash"
 	],
 	"globals": {
-		"moment": "readonly",
-		"mysql": "readonly",
-		"redis": "readonly",
+		"DBConnections": "readonly",
 		"rootDir": "readonly",
 		"document": "readonly"
     },
