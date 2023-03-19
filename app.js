@@ -1,4 +1,5 @@
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotEnv from "dotenv";
 import express from "express";
@@ -6,6 +7,7 @@ import http from "http";
 import nocache from "nocache";
 import path from "path";
 import mysqlDB from "./src/database/mysql";
+import redisDB from "./src/database/redis";
 
 class App {
 	constructor() {
@@ -40,19 +42,22 @@ class App {
 
 	connectDatabases = async () => {
 		const mysql = await mysqlDB.connect();
-		// eslint-disable-next-line no-console
-		console.log("MYSQL-connection has been established successfully.");
-
-		return { mysql };
+		const redis = await redisDB.connect();
+		return { mysql, redis };
 	};
 
 	configureExpressServer = (DBConnections) => {
 		return new Promise((resolve) => {
 			const app = express();
 			const routes = require("./src/routes").default;
-			app.set("base", process.env.API_zPREFIX);
+
+			app.set("base", process.env.API_PREFIX);
+			app.set("views", path.join(__dirname, "src/views"));
+			app.set("view engine", "ejs");
+
 			app.use(cors()); // enable cors
 			app.use(nocache()); // prevent default server-cache
+			app.use(cookieParser()); // enable cookie parser
 			app.use(express.json({ limit: "10mb" })); // set default response-type to json
 			app.use(express.urlencoded({ extended: true }));
 			app.use(bodyParser.urlencoded({ extended: false }));
